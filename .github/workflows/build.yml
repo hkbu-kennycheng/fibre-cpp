@@ -117,8 +117,9 @@ jobs:
       - name: Build
         run: |
           set -euo pipefail
-          # MSYS2 installs clang-aarch64 target packages under /opt/clang-aarch64
-          PREFIX=/opt/clang-aarch64
+          # MSYS2 clang-aarch64 target packages install to /clangarm64
+          # (verified from the package archives' .MTREE file lists)
+          PREFIX=/clangarm64
           export PKG_CONFIG_PATH=$PREFIX/lib/pkgconfig
           clang++ --target=aarch64-w64-windows-gnu \
             -isystem $PREFIX/include/c++/v1 \
