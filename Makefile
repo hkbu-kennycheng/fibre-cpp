@@ -12,7 +12,9 @@ else ifeq ($(shell uname -s),Linux)
 	target = linux
 	ifeq ($(shell uname -m),x86_64)
 		outname = libfibre-linux-amd64.so
-	else ifeq (($(shell uname -m),armv7l)
+	else ifeq ($(shell uname -m),aarch64)
+		outname = libfibre-linux-arm64.so
+	else ifeq ($(shell uname -m),armv7l)
 		outname = libfibre-linux-armhf.so
 	else
 		$(error unsupported platform)

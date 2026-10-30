@@ -21,6 +21,19 @@ jobs:
           name: libfibre-linux-amd64
           path: libfibre-linux-amd64.so
 
+  build-linux-arm64:
+    runs-on: ubuntu-24.04-arm
+    steps:
+      - uses: actions/checkout@v4
+      - name: Install libusb
+        run: sudo apt-get update && sudo apt-get install -y libusb-1.0-0-dev
+      - name: Build
+        run: make
+      - uses: actions/upload-artifact@v4
+        with:
+          name: libfibre-linux-arm64
+          path: libfibre-linux-arm64.so
+
   build-macos-arm64:
     runs-on: macos-latest
     steps:
@@ -77,8 +90,38 @@ jobs:
           name: libfibre-windows-amd64
           path: libfibre-windows-amd64.dll
 
+  build-windows-arm64:
+    runs-on: windows-latest
+    defaults:
+      run:
+        shell: msys2 {0}
+    steps:
+      - uses: actions/checkout@v4
+      - uses: msys2/setup-msys2@v2
+        with:
+          msystem: CLANGARM64
+          update: true
+          install: >-
+            mingw-w64-clang-aarch64-clang
+            mingw-w64-clang-aarch64-libusb
+            mingw-w64-clang-aarch64-pkg-config
+      - name: Build
+        run: |
+          set -euo pipefail
+          clang++ -shared -o libfibre-windows-arm64.dll -std=c++11 -I./include \
+            $(pkg-config --cflags libusb-1.0) \
+            -DFIBRE_COMPILE -DFIBRE_ENABLE_CLIENT \
+            libfibre.cpp platform_support/libusb_transport.cpp \
+            legacy_protocol.cpp legacy_object_client.cpp logging.cpp \
+            -static $(pkg-config --libs --static libusb-1.0)
+          llvm-strip --strip-all libfibre-windows-arm64.dll
+      - uses: actions/upload-artifact@v4
+        with:
+          name: libfibre-windows-arm64
+          path: libfibre-windows-arm64.dll
+
   release:
-    needs: [build-linux, build-macos-arm64, build-macos-x86_64, build-windows]
+    needs: [build-linux, build-linux-arm64, build-macos-arm64, build-macos-x86_64, build-windows, build-windows-arm64]
     if: startsWith(github.ref, 'refs/tags/v')
     runs-on: ubuntu-latest
     permissions:
@@ -91,6 +134,8 @@ jobs:
         with:
           files: |
             libfibre-linux-amd64.so
+            libfibre-linux-arm64.so
             libfibre-macos-arm64.dylib
             libfibre-macos-multiarch.dylib
             libfibre-windows-amd64.dll
+            libfibre-windows-arm64.dll
