@@ -109,7 +109,7 @@ jobs:
             mingw-w64-clang-x86_64-clang
             mingw-w64-clang-aarch64-headers
             mingw-w64-clang-aarch64-crt
-            mingw-w64-clang-aarch64-libcxx
+            mingw-w64-clang-aarch64-libc++
             mingw-w64-clang-aarch64-libunwind
             mingw-w64-clang-aarch64-libusb
             mingw-w64-clang-aarch64-winpthreads
