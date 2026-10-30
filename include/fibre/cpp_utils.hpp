@@ -78,6 +78,7 @@ public:
 #ifndef __CPP_UTILS_HPP
 #define __CPP_UTILS_HPP
 
+#include <cstddef>
 #include <limits>
 #include <tuple>
 #include <functional>
