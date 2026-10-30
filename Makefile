@@ -21,6 +21,8 @@ else ifeq ($(shell uname -s),Darwin)
 	target = macos
 	ifeq ($(shell uname -m),x86_64)
 		outname = libfibre-macos-multiarch.dylib
+	else ifeq ($(shell uname -m),arm64)
+		outname = libfibre-macos-arm64.dylib
 	else
 		$(error unsupported platform)
 	endif
@@ -41,6 +43,11 @@ windows:
 	g++ -shared -o $(outname) -fPIC -std=c++11 -I./third_party/libusb-windows/libusb-1.0.23/include/libusb-1.0 -I./include -DFIBRE_COMPILE -DFIBRE_ENABLE_CLIENT \
 		$(FILES) \
 		-static-libgcc -Wl,-Bstatic -lstdc++ ./third_party/libusb-windows/libusb-1.0.23/MinGW64/static/libusb-1.0.a -Wl,-Bdynamic
+
+macos:
+	clang++ -shared -o $(outname) -fPIC -std=c++11 -I$(shell brew --prefix libusb)/include/libusb-1.0 -I./include -DFIBRE_COMPILE -DFIBRE_ENABLE_CLIENT \
+		$(FILES) \
+		-L$(shell brew --prefix libusb)/lib -lusb-1.0
 
 # To check exported symbols run:
 #   nm -D libfibre.so | grep ' T '
