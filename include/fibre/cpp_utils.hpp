@@ -79,6 +79,7 @@ public:
 #define __CPP_UTILS_HPP
 
 #include <cstddef>
+#include <type_traits>
 #include <limits>
 #include <tuple>
 #include <functional>
